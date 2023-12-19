@@ -8,7 +8,7 @@ import Event from "../database/model/event.model"
 import Order from "../database/model/order.model"
 import { revalidatePath } from "next/cache"
 
-export const createUser = async(user: CreateUserParams) {
+export const createUser = async(user: CreateUserParams) => {
     try {
         await connectToDB();
         const newUser = await User.create(user);
@@ -19,7 +19,7 @@ export const createUser = async(user: CreateUserParams) {
     }
 }
 
-export const updateUser = async(clerkId: string,user: UpdateUserParams) {
+export const updateUser = async(clerkId: string,user: UpdateUserParams) => {
     try {
         await connectToDB();
         const updatedUser = await User.findOneAndUpdate({clerkId: clerkId}, user, {new : true});
@@ -31,7 +31,7 @@ export const updateUser = async(clerkId: string,user: UpdateUserParams) {
     }
 }
 
-export const deleteUser = async(clerkId: string) {
+export const deleteUser = async(clerkId: string) => {
     try {
         await connectToDB();
         const userToDelete = await User.findOne({clerkId:clerkId});

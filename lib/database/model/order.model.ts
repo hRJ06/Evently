@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
 export interface IOrder extends Document {
     _id: string,
@@ -31,5 +31,5 @@ const orderSchema = new Schema({
     }
 })
 
-const Order = models.Order || models('Order', orderSchema);
+const Order = models.Order || model('Order', orderSchema);
 export default Order;
