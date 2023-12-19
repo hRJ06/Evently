@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
 const userSchema = new Schema({
     clerkId: {
@@ -27,7 +27,19 @@ const userSchema = new Schema({
     photo: {
         type: String, 
         required: true,
-    }
+    },
+    events: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Event'
+        }
+    ],
+    orders: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Order'
+        }
+    ]
 })
 
 const User = models.User || model('User',userSchema);
