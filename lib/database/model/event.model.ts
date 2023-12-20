@@ -26,6 +26,9 @@ const EventSchema = new Schema({
     location: {
         type: String, 
     },
+    tickets: {
+        type: Number,
+    },
     createdAt: {
         type: Date,
         default: Date.now()
