@@ -1,9 +1,18 @@
+import Collection from '@/components/shared/Collection'
 import { Button } from '@/components/ui/button'
+import { getAllEvents } from '@/lib/actions/event.actions'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const page = () => {
+const page = async() => {
+  const events = await getAllEvents({
+    query: '',
+    category: '',
+    page: 1,
+    limit: 6
+  });
+  console.log(events)
   return (
     <>
       <section className='bg-primary-50 bg-dotted-pattern bg-contain py-5 md:py-10'>
@@ -25,6 +34,7 @@ const page = () => {
         <div className='flex w-full flex-col gap-5 md:flex-row'>
 
         </div>
+        <Collection data={events?.data} emptyTitle="No Events Found" emptyStateSubtext = "Come Back Later" collectionType = "All_Events" limit={6} page={1} totalPages={2}/>
       </section>
     </>
   )
