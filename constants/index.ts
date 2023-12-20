@@ -24,6 +24,5 @@ export const headerLinks = [
     price: '',
     isFree: false,
     url: '',
-    isOnline: false,
-    onlineUrl: ''
+    tickets: ''
   }

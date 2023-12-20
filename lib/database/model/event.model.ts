@@ -34,7 +34,7 @@ const EventSchema = new Schema({
         default: Date.now()
     },
     imageUrl: {
-        type: Date,
+        type: String,
         required: true,
     },
     startDateTime: {
@@ -42,7 +42,8 @@ const EventSchema = new Schema({
         required: true
     },
     endDateTime: {
-        type: String
+        type: Date,
+        required: true
     },
     isFree: {
         type: Boolean
