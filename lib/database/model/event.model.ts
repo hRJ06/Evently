@@ -7,11 +7,19 @@ export interface IEvent extends Document {
     createdAt: Date;
     imageUrl?: string;
     startDateTime: Date;
+    endDateTime: Date;
     price?: string;
     isFree: boolean;
     url?: string;
-    category: Types.ObjectId;
-    organizer: Types.ObjectId;
+    category: {
+        _id: string,
+        name: string
+    };
+    organizer: {
+        _id: string,
+        firstName: string
+        lastName: string
+    };
 }
 
 const EventSchema = new Schema({
@@ -27,7 +35,7 @@ const EventSchema = new Schema({
         type: String, 
     },
     tickets: {
-        type: Number,
+        type: String,
     },
     createdAt: {
         type: Date,
