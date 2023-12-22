@@ -17,7 +17,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
           line_items: [
               {
                   price_data: {
-                      currency: 'inr',
+                      currency: 'inr', // Default to INR if currency is not provided
                       unit_amount: price,
                       product_data: {
                           name: order.eventTitle
@@ -34,6 +34,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
           success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/profile`,
           cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/`,
           payment_intent_data: {
+              receipt_email: 'customer@example.com', // Replace with an actual customer email if available
               shipping: {
                   name: 'Customer X', // Replace with an actual customer name if available
                   address: {
@@ -42,7 +43,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
                       city: 'City X',
                       state: 'State X',
                       postal_code: 'Postal Code X',
-                      country: 'IN', // Use 'IN' for India
+                      country: 'US', 
                   }
               }
           },
@@ -53,7 +54,6 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
       throw err;
   }
 }
-
 
 
 export const createOrder = async (order: CreateOrderParams) => {
