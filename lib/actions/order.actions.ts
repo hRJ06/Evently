@@ -7,38 +7,54 @@ import { connectToDB } from "../database";
 import Order from "../database/model/order.model";
 import Event from "../database/model/event.model";
 
-export const checkoutOrder = async(order: CheckoutOrderParams) => {
-    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    const price = order.isFree ? 0 : Number(order.price) * 100;
-    try {
-        // US only Support Link & GPay
-        const session = await stripe.checkout.sessions.create({
-            line_items: [
+export const checkoutOrder = async (order: CheckoutOrderParams) => {
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  const price = order.isFree ? 0 : Number(order.price) * 100;
+
+  try {
+      // US only Support Link & GPay
+      const session = await stripe.checkout.sessions.create({
+          line_items: [
               {
-                price_data: {
-                    currency: 'inr',
-                    unit_amount: price,
-                    product_data: {
-                        name: order.eventTitle
-                  }
-                },
-                quantity: 1
+                  price_data: {
+                      currency: 'inr',
+                      unit_amount: price,
+                      product_data: {
+                          name: order.eventTitle
+                      }
+                  },
+                  quantity: 1
               },
-            ],
-            metadata: {
-                eventId: order.eventId,
-                buyer: order.buyerId
-            },
-            mode: 'payment',
-            success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/profile`,
-            cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/`,
-          });
-          redirect(session.url!);
-    }
-    catch (err) {
-        throw err;
-    }
+          ],
+          metadata: {
+              eventId: order.eventId,
+              buyer: order.buyerId
+          },
+          mode: 'payment',
+          success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/profile`,
+          cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/`,
+          payment_intent_data: {
+              shipping: {
+                  name: 'Customer X', // Replace with an actual customer name if available
+                  address: {
+                      line1: 'Address Line 1 X',
+                      line2: 'Address Line 2 X',
+                      city: 'City X',
+                      state: 'State X',
+                      postal_code: 'Postal Code X',
+                      country: 'IN', // Use 'IN' for India
+                  }
+              }
+          },
+      });
+
+      redirect(session.url!);
+  } catch (err) {
+      throw err;
+  }
 }
+
+
 
 export const createOrder = async (order: CreateOrderParams) => {
     try {
