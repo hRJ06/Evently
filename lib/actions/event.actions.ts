@@ -7,6 +7,7 @@ import User from "../database/model/user.model"
 import Event from "../database/model/event.model"
 import Category from "../database/model/category.model"
 import { revalidatePath } from "next/cache"
+import { getCategoryByName } from "./category.actions"
 
 
 export const createEvent = async({event, userId, path}: CreateEventParams) => {
@@ -50,8 +51,13 @@ export const getEventById = async(eventId: string) => {
 export const getAllEvents = async({query, limit = 6, page, category}: GetAllEventsParams) => {
     try {
         await connectToDB();
-        const conditions = {}
-        const events = await Event.find(conditions).sort({createdAt: 'desc'}).skip(0).limit(limit).populate({
+        const titleCondition = query ? {title : {$regex: query, $options: 'i'}} : {}
+        const categoryCondition = category ? await getCategoryByName(category) : null
+        const condition = {
+            $and: [titleCondition, categoryCondition ? {category: categoryCondition._id} : {}]
+        }
+        const skipAmount = (Number(page) - 1) * limit
+        const events = await Event.find(condition).sort({createdAt: 'desc'}).skip(skipAmount).limit(limit).populate({
             path: 'organizer',
             model: User,
             select: '_id firstName lastName'
@@ -60,7 +66,7 @@ export const getAllEvents = async({query, limit = 6, page, category}: GetAllEven
             model: Category,
             select: '_id name'
         });
-        const eventsCount = await Event.countDocuments(conditions);
+        const eventsCount = await Event.countDocuments(condition);
         return {
             data: JSON.parse(JSON.stringify(events)),
             totalPages: Math.ceil(eventsCount / limit)
