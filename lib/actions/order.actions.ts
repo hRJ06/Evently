@@ -21,7 +21,8 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
                         currency: 'inr', 
                         unit_amount: price,
                         product_data: {
-                            name: order.eventTitle
+                            name: order.eventTitle,
+                            images: [`${order.eventPicture}`]
                         }
                     },
                     quantity: 1

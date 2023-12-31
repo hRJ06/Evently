@@ -152,7 +152,7 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
         const eventsCount = await Event.countDocuments(condition);
         return {
             data: JSON.parse(JSON.stringify(events)),
-            totalPages: eventsCount
+            totalPages: eventsCount / limit
         }
     }
     catch (err) {

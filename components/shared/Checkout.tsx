@@ -24,6 +24,7 @@ const Checkout = ({event, userId}: {event: IEvent, userId: string}) => {
         const order = {
             eventTitle: event.title,
             eventId: event._id,
+            eventPicture: event.imageUrl,
             price: event.price,
             isFree: event.isFree,
             buyerId: userId

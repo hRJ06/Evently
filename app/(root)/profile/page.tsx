@@ -1,4 +1,6 @@
+import CategoryFilter from '@/components/shared/CategoryFilter'
 import Collection from '@/components/shared/Collection'
+import Search from '@/components/shared/Search'
 import { Button } from '@/components/ui/button'
 import { getEventsByUser } from '@/lib/actions/event.actions'
 import { getOrdersByUser } from '@/lib/actions/order.actions'
@@ -14,9 +16,10 @@ const page = async({searchParams} : SearchParamProps) => {
     const ordersPage = Number(searchParams?.ordersPage) || 1
     const eventsPage = Number(searchParams?.eventsPage) || 1
     const orders = await getOrdersByUser({userId, page: ordersPage})
-    const orderedEvents = orders?.data?.map((order : IOrder) =>
-        order.event
-    ) || []
+    const orderedEvents = (orders?.data || []).map((order: IOrder) => ({
+        ...order.event,
+        orderId: order._id,
+    }));      
     const organizedEvents = await getEventsByUser({userId, page: eventsPage})
   return (
     <>
