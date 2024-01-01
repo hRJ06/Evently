@@ -106,55 +106,63 @@ export async function getOrdersByUser({userId, limit = 3, page}: GetOrdersByUser
 export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEventParams) {
     try {
         await connectToDB()
-    
+
         if (!eventId) throw new Error('Event ID is required')
         const eventObjectId = new Types.ObjectId(eventId)
-    
+
         const orders = await Order.aggregate([
             {
-            $lookup: {
-                from: 'users',
-                localField: 'buyer',
-                foreignField: '_id',
-                as: 'buyer',
-            },
-            },
-            {
-            $unwind: '$buyer',
-            },
-            {
-            $lookup: {
-                from: 'events',
-                localField: 'event',
-                foreignField: '_id',
-                as: 'event',
-            },
-            },
-            {
-            $unwind: '$event',
-            },
-            {
-            $project: {
-                _id: 1,
-                totalAmount: 1,
-                createdAt: 1,
-                eventTitle: '$event.title',
-                eventId: '$event._id',
-                buyer: {
-                $concat: ['$buyer.firstName', ' ', '$buyer.lastName'],
+                $lookup: {
+                    from: 'users',
+                    localField: 'buyer',
+                    foreignField: '_id',
+                    as: 'buyer',
                 },
             },
+            {
+                $unwind: '$buyer',
             },
             {
-            $match: {
-                $and: [{ eventId: eventObjectId }, { buyer: { $regex: RegExp(searchString, 'i') } }],
+                $lookup: {
+                    from: 'events',
+                    localField: 'event',
+                    foreignField: '_id',
+                    as: 'event',
+                },
             },
+            {
+                $unwind: '$event',
+            },
+            {
+                $project: {
+                    _id: 1,
+                    totalAmount: 1,
+                    createdAt: 1,
+                    eventTitle: '$event.title',
+                    eventId: '$event._id',
+                    buyer: {
+                        $concat: ['$buyer.firstName', ' ', '$buyer.lastName'],
+                    },
+                    buyerEmail: '$buyer.email',
+                },
+            },
+            {
+                $match: {
+                    $and: [
+                        { eventId: eventObjectId },
+                        {
+                            $or: [
+                                { buyer: { $regex: RegExp(searchString, 'i') } },
+                                { buyerEmail: { $regex: RegExp(searchString, 'i') } },
+                            ],
+                        },
+                    ],
+                },
             },
         ])
-    
+
         return JSON.parse(JSON.stringify(orders))
-    } 
-    catch (error) {
-      handleError(error)
+    } catch (error) {
+        handleError(error)
     }
 }
